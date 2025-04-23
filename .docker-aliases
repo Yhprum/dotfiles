@@ -1,0 +1,47 @@
+alias dps="docker ps -a --format "table {{.Names}}\t{{.ID}}\t{{.Image}}\t{{.Status}}" | (read -r; printf "%s\n" "$REPLY"; sort -k 1 )"
+alias dcd="docker-compose down -v"
+alias dcp="docker-compose pull"
+alias dcu="docker-compose up -d"
+alias dsp="docker system prune -a --volumes"
+
+# FUNCTIONS ####################################################
+
+dc() {
+  docker compose $*
+}
+
+# Restarts a container
+#
+dr() {
+  stop $1
+  start $1
+}
+
+# Opens a bash shell, given a supplied container name
+#
+dbash() {
+  docker exec -it $1 /bin/bash
+}
+
+# Opens a sh shell, given a supplied container name
+#
+dsh() {
+  docker exec -it $1 /bin/sh
+}
+
+# Executes a command in a container
+#
+dx() {
+  docker exec -it $1 $*
+}
+
+# Shows "port in use" details for a supplied port number
+#
+piu() {
+  sudo netstat -plan | grep ":$1"
+}
+
+caddy() {
+  caddy_container_id=$(docker ps | grep caddy | awk "{print $1;}")
+  docker exec -w /etc/caddy $caddy_container_id caddy $*
+}
